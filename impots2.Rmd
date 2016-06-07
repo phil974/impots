@@ -1,0 +1,297 @@
+---
+title: "impôts"
+author: "Philippe Charton"
+date: "mai 2015"
+output: html_document
+---
+```{r echo = FALSE}
+source('~/rdata/test/calculimpot.R')
+load("~/rdata/test/2015-9")
+#load("~/rdata/perso/2014")
+# revenu max par adulte
+rmax=500
+```
+
+# Quelques éléments sur le système fiscal français
+## L'impôt sur le revenu (barème sur les revenus de `r di$annee`)
+Normalement, l'impôt est progressif.
+Ce qui veut dire, que plus le revenu est important, plus le taux  d'imposition est important.
+
+
+```{r echo = FALSE}
+tabimpot1 = numeric(rmax)
+for (i in 1:rmax)
+tabimpot1[i] = impots(filldeclarant(revenu=i*100))$impots
+
+plot(1:rmax/10,tabimpot1,col="blue",type="l",xlab="revenus annuels (k€)",ylab="impôt",main="impôt d'un célibataire")
+
+```
+
+(revenu d'activité imposable avec frais professionnels de 10 % minimun `r di$plancherFraisPro` maximum 12157)
+
+Le taux marginal d’impostion (TMI) c’est l’impôt en plus quand on augmente son revenu de 100 €.
+
+C’est aussi la pente du graphique ci-dessus.
+
+Sur ce graphique, on constate que la mise en place de décote fait que le TMI est dans un premier temps de 22 %.
+(En incluant le minimum de perception, on a même un petit saut, pour 1 € supplémentaire, l'impôt passe de 0 à 61€ !!)
+Ci-dessous la représentation du TMI.
+
+```{r echo = FALSE}
+TMI1=diff(tabimpot1)
+plot(1:(rmax-1)/10,TMI1,col="blue",type="l",xlab="revenus annuels (k€)",ylab="TMI (%)",main="TMI d'un célibataire",ylim=c(0,50))
+
+```
+
+
+**Remarque :** Les arrondis à l'euro le plus proche de l'impôt provoquent des micro-oscillations dans le TMI.
+
+On peut également représenter le taux d'imposition moyen (impôts/revenus).
+
+```{r echo=FALSE}
+plot(1:rmax/10,tabimpot1/1:rmax,col="blue",type="l",xlab="revenus annuels (k€)",ylab="taux d'impôt",main="taux d'impôt d'un célibataire")
+```
+
+## couple
+Ci-dessous le TMI d'un couple avec deux personnes ayant le même revenu comparé à celui de deux célibataires.
+
+**En abcisse, j'ai indiqué le revenu moyen par personne.**
+
+```{r echo = FALSE}
+tabimpot2 = numeric(rmax)
+for (i in 1:rmax){FF = filldeclarant(revenu=i*100)
+FF$AJ[2]= 100*i
+tabimpot2[i] = FF=impots(FF,nbparts=2)$impots
+}
+diff1 = tabimpot2-2*tabimpot1
+TMI2 = diff(tabimpot2) / 2
+plot(1:(rmax-1)/10,TMI1,type="l",xlab="revenus annuels (k€)",ylab="TMI (%)",main="TMI couple/2 célibataires 50:50")
+lines(1:(rmax-1)/10,TMI2,type="l",col="blue")
+legend("bottomright",legend=c("2 célibataires","couple"),col=c("black","blue"),lty=c(1,1))
+
+```
+
+Mise à part la décote qui est peu moins que le double de la décote d'un célibataire, le TMI est le même.
+
+Supposons maintenant une répartion différente :
+```{r echo = FALSE}
+tabimpot2.1 = numeric(rmax)
+tabimpot.1 = numeric(rmax)
+R1=120
+R2=200-R1
+for (i in 1:rmax){FF = filldeclarant(revenu=i*R1)
+FF1=impots(FF)
+
+FF$AJ[2]= R2*i
+FFc=impots(FF,nbparts=2)
+
+FF = filldeclarant(revenu=i*R2)
+FF2=impots(FF)
+tabimpot2.1[i] = FFc$impots
+tabimpot.1[i] = FF1$impots + FF2$impots
+}
+TMI2.1 = diff(tabimpot2.1) / 2
+TMI.1 =  diff(tabimpot.1) / 2
+diff2 = tabimpot2.1-tabimpot.1
+
+plot(1:rmax/10,tabimpot.1/1:rmax/2,type="l",xlab="revenus annuels (k€)",ylab="tx impôt",main=paste("tx impôt couple/2 célibataires ",R1/2,":",R2/2,sep=""))
+lines(1:rmax/10,tabimpot2.1/1:rmax/2,col="blue")
+legend("bottomright",legend=c("2 célibataires","couple"),col=c("black","blue"),lty=c(1,1))
+
+plot(1:(rmax-1)/10,TMI.1,type="l",xlab="revenus annuels (k€)",ylab="TMI (%)",main=paste("TMI couple/2 célibataires ",R1/2,":",R2/2,sep=""))
+lines(1:(rmax-1)/10,TMI2.1,type="l",col="blue")
+legend("bottomright",legend=c("2 célibataires","couple"),col=c("black","blue"),lty=c(1,1))
+
+```
+
+C'est très fluctuant... 
+
+Pour y voir plus clair, représentons la différence d'impôt couple/2 célibataires :
+```{r echo = FALSE}
+plot(1:rmax/10,diff2,type="l",xlab="revenus annuels (k€)",ylab="différence d'impôt")
+lines(1:rmax/10,diff1,col="blue")
+legend("topright",legend=c("2 célibataires","couple"),col=c("blue","black"),lty=c(1,1))
+```
+
+Quand les revenus sont différents, il est généralement plus interessant de faire une déclaration commune, la différence peut aller jusqu'à `r min(diff2)`€, c'est rarement le même montant...
+
+## famille deux adultes deux enfants
+
+Ci-dessous le TMI d'une famille avec quatre personnes, les deux parents ayant le même revenu comparé à celui d'un couple.
+
+**En abcisse, j'ai indiqué le revenu moyen par adulte.**
+
+
+```{r echo = FALSE}
+
+tabimpot4 = numeric(rmax)
+for (i in 1:rmax){FF = filldeclarant(revenu=i*100)
+FF$AJ[2]= 100*i
+FF=impots(FF,nbparts=3)
+tabimpot4[i] = FF$impots
+}
+diff1 = tabimpot4-tabimpot2
+
+plot(1:rmax/10,tabimpot2/1:rmax/2,type="l",xlab="revenus annuels (k€)",ylab="tx impôt",main="tx impôt famille/couple 50:50")
+lines(1:rmax/10,tabimpot4/1:rmax/2,col="blue")
+legend("bottomright",legend=c("couple","famille"),col=c("black","blue"),lty=c(1,1))
+
+TMI4 = diff(tabimpot4) / 2
+plot(1:(rmax-1)/10,TMI2,type="l",xlab="revenus annuels (k€)",ylab="TMI (%)",main="TMI famille/couple 50:50")
+lines(1:(rmax-1)/10,TMI4,type="l",col="blue")
+legend("bottomright",legend=c("couple","famille"),col=c("black","blue"),lty=c(1,1))
+```
+
+Mais il y a également des aides et allocations : RSA, allocation logement et allocations familiales.
+
+## Allocations
+
+Tout d'abord le RSA (barème `r di$annee`), voici son évolution pour un célibataire, un couple et une famille avec deux enfants en fonction de leur revenu :
+
+**En abcisse, j'ai indiqué le revenu du foyer, en ordonée l'allocation du foyer.**
+
+
+
+```{r echo=FALSE}
+rsamax=300
+mrsa=numeric(rsamax+1)
+mrsa2=numeric(rsamax+1)
+mrsa4=numeric(rsamax+1)
+for (i in 0:rsamax) mrsa[i+1] = 12*rsa(100*i)
+for (i in 0:rsamax) mrsa2[i+1] = 12*rsa(100*i,nbpers = 2)
+for (i in 0:rsamax) mrsa4[i+1] = 12*rsa(100*i,nbpers = 4)
+plot(0:rsamax/10,mrsa,type="l",xlab="revenus annuels (k€)",ylab="montant annuel RSA",ylim=range(mrsa,mrsa2,mrsa4),
+     main="RSA")
+lines(0:rsamax/10,mrsa2,col=2)
+lines(0:rsamax/10,mrsa4,col=3)
+legend("topright",legend=c("célibataire","couple","famille"),col=1:3,lty=1)
+```
+
+Le montant est dégréssif de 38 % du revenus. Si on est logé gratuitement ou si l'on bénéficie d'une allocation logement il faut retirer un forfait logement qui dépend du nombre de personnes `r di$forfaitlogement`...
+
+Et maintenant l'allocation logement, avec comme hypothèse un loyer supérieur au plafond en zone 2 (barème 2015 pour l'instant...).
+```{r echo=FALSE}
+allmax=300
+mall=numeric(allmax+1)
+mall2=numeric(allmax+1)
+mall4=numeric(allmax+1)
+for (i in 0:allmax) mall[i+1] = 12*alloclogement(100*i)
+for (i in 0:allmax) mall2[i+1] = 12*alloclogement(100*i,nbpers = 2)
+for (i in 0:allmax) mall4[i+1] = 12*alloclogement(100*i,nbpers = 4)
+plot(0:allmax/10,mall,type="l",xlab="revenus annuels (k€)",ylab="montant annuel all",ylim=range(mall,mall2,mall4),
+     main="Allocation Logement Locataire")
+lines(0:allmax/10,mall2,col=2)
+lines(0:allmax/10,mall4,col=3)
+legend("topright",legend=c("célibataire","couple","famille"),col=1:3,lty=1)
+```
+
+Le montant dépend de la composition de la famille, la pente (taux de participation) aussi...Les revenus sont arrondis en centaines d'euros ce qui provoque de petits paliers.
+
+Les allocations fanilliales sont maintenant dégréssives, montant annuel dans le cas d'un famille avec deux enfants de plus de 14 ans...La dégréssivité est beaucoup plus loin...(simulation de l'effet en année pleine, la mesure ayant été appliquée à partir du 1er juillet, l'effet n'a pas été totale en 2016)
+
+```{r echo=FALSE}
+alfmax=1100
+malf4=numeric(alfmax+1)
+for (i in 0:alfmax) malf4[i+1] = 12*allocf(100*i,c(15,15))
+plot(0:alfmax/10,malf4,type="l",xlab="revenus annuels (k€)",ylab="montant annuel allocations familliales",col=3)
+```
+
+
+Pour finir les bourses du CROUS, hypothèse : deux étudiants à moins de 30 kms du domicile (donc 4 points de charge)
+
+```{r echo=FALSE}
+alcmax=650
+malc=numeric(alcmax+1)
+for (i in 0:alcmax) malc[i+1] = allocrous(100*i,nbetu=2)
+plot(0:alcmax/10,malc,type="l",xlab="revenus annuels (k€)",ylab="montant annuel aide CROUS",
+     main="Bourse CROUS + exo. droits inscriptions",col=4)
+legend("topright",legend="famille etu",col=4,lty=1)
+```
+
+
+On peut maintenant regarder le niveau de vie qui est le revenu disponible (revenus + allocations - impôts) divisé par le nombre d'unité de consomation (1 pour un célibataire, 1.5 pour un couple, 2.5 pour une famille avec deux enfants de plus de 14 ans) en fonction des revenus du foyer. J'ai lissé l'allocation logement pour augmenter la lisibilité.
+
+Entre 19 100 et 29 200 € de revenus, la famille avec deux étudiants voit son revenu disponible baisser de 40904 à 38019 €...
+
+```{r echo=FALSE}
+#rmax=2*rmax
+tabimpot=numeric(rmax+1)
+tabimpot2=numeric(rmax+1)
+tabimpot3=numeric(rmax+1)
+tabimpot4=numeric(rmax+1)
+for (i in 0:rmax) tabimpot[i+1]=impotsaides(i*100,arrondi=F)
+for (i in 0:rmax) tabimpot2[i+1]=impotsaides(i*100,nbpers=2,arrondi=F)
+for (i in 0:rmax) tabimpot3[i+1]=impotsaides(i*100,nbpers=4,arrondi=F)
+for (i in 0:rmax) tabimpot4[i+1]=impotsaides(i*100,nbpers=4,nbetu=2,arrondi=F)
+rav = 0:rmax * 100 -tabimpot
+rav2 = 0:rmax * 100 -tabimpot2
+rav3 = 0:rmax * 100 -tabimpot3
+rav4 = 0:rmax * 100 -tabimpot4
+legende=c("célibataire","couple","famille","famille etu")
+
+#revenu disponible
+plot(0:rmax/10,rav/1000,type="l",
+     col=1,xlab="revenus annuels (k€)",ylab="revenu disponible (k€)",ylim=range(rav/1000,rav2/1000,rav4/1000))
+lines(0:rmax/10,rav2/1000,col=2)
+lines(0:rmax/10,rav3/1000,col=3)
+lines(0:rmax/10,rav4/1000,col=4)
+legend("bottomright",legend=legende,col=1:4,lty=1)
+#niveau de vie
+plot(0:rmax/10,rav/1000,type="l",
+     col=1,xlab="revenus annuels (k€)",ylab="niveau de vie (k€)",ylim=range(rav/1000,rav2/1500,rav4/2500))
+lines(0:rmax/10,rav2/1500,col=2)
+lines(0:rmax/10,rav3/2500,col=3)
+lines(0:rmax/10,rav4/2500,col=4)
+legend("topleft",legend=legende,col=1:4,lty=1)
+#TM
+plot(1:rmax/10,diff(tabimpot),type="l",ylim=c(0,80),
+#     xlim=range(rav,rav2/1.5,rav4/2.1),
+     col=1,xlab="revenus annuels (k€)",ylab="TM(I-A)")
+lines(1:rmax/10,diff(tabimpot2),col=2)
+lines(1:rmax/10,diff(tabimpot3),col=3)
+#lines(1:rmax/10,diff(tabimpot4),col=4)
+legend("topright",legend=c("célibataire","couple","famille"),col=1:3,lty=1)
+# taux impots-aides  en fonction revenus
+plot(1:rmax/10,(tabimpot[-1]-tabimpot[1])/1:rmax,type="l",col=1,xlab="revenus annuels (k€)",ylab="TX(I-A)",ylim=c(0,130))
+lines(1:rmax/10,(tabimpot2[-1]-tabimpot2[1])/1:rmax,col=2)
+lines(1:rmax/10,(tabimpot3[-1]-tabimpot3[1])/1:rmax,col=3)
+lines(1:rmax/10,(tabimpot4[-1]-tabimpot4[1])/1:rmax,col=4)
+legend("topright",legend=legende,col=1:4,lty=1)
+# taux impots-aides en fonction niveau vie
+plot(rav[-1]/1000,(tabimpot[-1]-tabimpot[1])/1:rmax,type="l",col=1,xlab="niveau de vie annuels (k€)",ylab="TX(I-A)",ylim=c(0,130))
+lines(rav2[-1]/1500,(tabimpot2[-1]-tabimpot2[1])/1:rmax,col=2)
+lines(rav3[-1]/2500,(tabimpot3[-1]-tabimpot3[1])/1:rmax,col=3)
+lines(rav4[-1]/2500,(tabimpot4[-1]-tabimpot4[1])/1:rmax,col=4)
+legend("topright",legend=legende,col=1:4,lty=1)
+# niveau de vie avant/après
+plot(0:rmax/10,rav/1000,type='l',col=1,xlab="niveau de vie avant impôts et aides (k€)",ylab="niveau de vie après impôts et aides (k€)")
+lines(0:rmax/10/1.5,rav2/1500,col=2)
+lines(0:rmax/10/2.5,rav3/2500,col=3)
+lines(0:rmax/10/2.5,rav4/2500,col=4)
+legend("topleft",legend=legende,col=1:4,lty=1)
+
+```
+
+On voit que la progressivité de l'impôt est très relative, le TM(I-A) monte jusqu'à 75 % pour les couples et à peine moins pour les autres situations...
+
+Un petit zoom semble nécessaire pour expliquer tout ça.
+```{r echo=FALSE}
+plot(rav[1:rmax]/1000,diff(tabimpot),type="l",ylim=c(0,80),
+     xlim=c(9,18),
+     col=1,xlab="niveau de vie annuels (k€)",ylab="TM(I-A)")
+lines(rav2[1:rmax]/1500,diff(tabimpot2),col=2)
+lines(rav3[1:rmax]/2500,diff(tabimpot3),col=3)
+legend("bottomleft",legend=c("célibataire","couple","famille"),col=1:3,lty=1)
+legend(8.5,45,legend="1",bty="n",text.col=3)
+legend(10,75,legend="2",bty="n",text.col=3)
+legend(12.2,85,legend="3",bty="n",text.col=3)
+legend(14,70,legend="4",bty="n",text.col=3)
+legend(16.7,45,legend="5",bty="n",text.col=3)
+
+```
+
+Les trois courbes commencent au niveau de dégressivité du rsa : 38 % (1). Il faut ensuite cumuler celle de l'allocation logement (2). La fin d'une allocation provoque un pic à cause du minimum de perception (3 fin allocation logement, 4 fin rsa, 5 début impôts). Pour un célibataire, la fin des allocations et le début de l'impôt est presque simultanée. Pour les autres situations, c'est bien séparé.
+
+Il faudrait compléter par des autres aides, comme par exemple la CMU-C et ACS (aide à la mutuelle), réduction sur la taxe d'habitation, prime pour l'emploi. Ces aides sont pour la plupart avec seuil, quand on dépasse le seuil, en gagnant plus on se retrouve avec mois à la fin du mois...
+
+**Note :** J'ai ajouté les allocations familiales qui pour l'instant ne tiennent pas compte du revenu. Je présenterais l'impact de la modulation dès que le décret sera sortie...
