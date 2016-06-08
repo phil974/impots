@@ -1,7 +1,5 @@
-source('~/rdata/test/calculimpot.R')
-load("~/rdata/test/2015-9")
 shinyServer(function(input, output) {
-
+    
     rmax <- 2000
     tabimpot1 = numeric(rmax)
     for (i in 1:rmax)
