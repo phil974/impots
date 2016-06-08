@@ -1,4 +1,4 @@
-# test
-only a test repo
+# Impots
 
-Cela devient un essai un peu plus approfondi
+Au départ un test de github...
+qui est devenu un "projet" sur le calcul d'impots et aide en France
