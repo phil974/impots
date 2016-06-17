@@ -2,6 +2,8 @@
 # il faut charger données et barème
 # par ex load("2014")
 # ne tient pas compte de la contribution execptionnelle
+# qui commence pour rfr >250 k€ pour célibataire
+# et 500 k€ pour couple et famille
 # FF foyer fiscal
 #list(  
 #    AJ = revenusalaires,
@@ -12,9 +14,8 @@
 # (mais le calcul est alors faux...)
 impots <- function(FF,nbparts=1,DOM=FALSE,min_per=TRUE,arrondi = TRUE)
 with(di,{
-nbd = length(FF$AJ)
 # calcul des frais pro : AK
-for(i in 1:nbd)
+for(i in 1:length(FF$AJ))
     # si pas frais réel faire le calcul
     if (is.na(FF$AK[i])){
         if(FF$AJ[i]>0) {
@@ -23,6 +24,7 @@ for(i in 1:nbd)
         }
         else FF$AK[i] <- 0
     }
+# abbatement de 40 % sur dividendes pour revenunet mais pas rfr     
 revenunet <- sum(FF$AJ-FF$AK)+0.6*FF$BDC+FF$CVG
 FF$rfr <- sum(FF$AJ-FF$AK)+FF$BDC+FF$CVG
 #cat(revenunet,rfr,"\n")
@@ -40,12 +42,12 @@ else
 # reduction DOM
 if(DOM) impots <- impots - min(0.3*impots,plafondDom)
 
-# decote
+# celibataire ou couple ?
 if (nbparts == 1)
     i = 1
 else i = 2
 
-# changement de systeme entre 2014 et 2015
+# decote : changement de systeme entre 2014 et 2015
 if (annee == 2015){
     if (impots < decote[i]/0.75)
     impots <- max(1.75*impots - decote[i],0)
@@ -64,6 +66,7 @@ if(min_per)
 FF$impots <- impots
 FF
 })
+
 impotsparpart <- function(QF)
 with(di,{
     impot = 0   

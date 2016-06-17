@@ -7,7 +7,7 @@ mainPanel(
 Ce qui veut dire, que plus le revenu est important, plus le taux  d'imposition est important."),
     sliderInput("revenus","revenus par personne (k€)",
                              min = 10,
-                             max = 200, value = 50),
+                             max = rmax/10, value = 50),
         plotOutput("Plot1"),
     p("revenu d'activité imposable avec frais professionnels de 10 % minimun", 
       di$plancherFraisPro," maximum ",di$plafondFraisPro),

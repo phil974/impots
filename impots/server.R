@@ -1,6 +1,5 @@
 shinyServer(function(input, output) {
     
-    rmax <- 2000
     tabimpot1 = numeric(rmax)
     for (i in 1:rmax)
         tabimpot1[i] = impots(filldeclarant(revenu=i*100))$impots
