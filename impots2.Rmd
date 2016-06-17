@@ -5,8 +5,8 @@ date: "mai 2015"
 output: html_document
 ---
 ```{r echo = FALSE}
-source('~/rdata/test/calculimpot.R')
-load("~/rdata/test/2015-9")
+source('~/rdata/impots/calculimpot.R')
+load("~/rdata/impots/2015-9")
 #load("~/rdata/perso/2014")
 # revenu max par adulte
 rmax=500
@@ -61,7 +61,7 @@ Ci-dessous le TMI d'un couple avec deux personnes ayant le même revenu comparé
 tabimpot2 = numeric(rmax)
 for (i in 1:rmax){FF = filldeclarant(revenu=i*100)
 FF$AJ[2]= 100*i
-tabimpot2[i] = FF=impots(FF,nbparts=2)$impots
+tabimpot2[i] = impots(FF,nbparts=2)$impots
 }
 diff1 = tabimpot2-2*tabimpot1
 TMI2 = diff(tabimpot2) / 2
