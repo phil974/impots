@@ -5,6 +5,7 @@ mainPanel(
     h2("L'impôt sur le revenu (barème sur les revenus de ",di$annee,")"),
     p("Normalement, l'impôt est progressif.
 Ce qui veut dire, que plus le revenu est important, plus le taux  d'imposition est important."),
+    radioButtons("typeff","Composition du foyer fiscal",choix,inline=TRUE),
     sliderInput("revenus","revenus par personne (k€)",
                              min = 10,
                              max = rmax/10, value = 50),
