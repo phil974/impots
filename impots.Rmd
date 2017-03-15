@@ -15,9 +15,9 @@ Le taux marginal d'impostion (TMI) c'est l'impôt en plus quand on augmente son 
 C'est aussi la pente du graphique ci-dessous qui représente l'impôt en fonction du revenu d'un célibataire.
 
 ```{r echo = FALSE}
-source('~/rdata/perso/calculimpot.R')
-load("~/rdata/perso/2014")
-rmax=1000
+source('~/rdata/impots/calculimpot.R')
+load("~/rdata/impots/2016")
+rmax=500
 tabimpot1 = numeric(rmax)
 for (i in 1:rmax)
 tabimpot1[i] = impots(filldeclarant(revenu=i*100))$impots

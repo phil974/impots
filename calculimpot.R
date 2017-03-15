@@ -48,6 +48,20 @@ if (nbparts == 1)
 else i = 2
 
 # decote : changement de systeme entre 2014 et 2015
+# encore un nouveau systeme en 2016...
+if (annee == 2016){
+    if (impots < decote[i]/0.75)
+        impots <- max(1.75*impots - decote[i],0)   
+    if(FF$rfr <i*20500 +(nbparts-i)*7400){
+        
+        if (FF$rfr <i*18500 +(nbparts-i)*7400)
+            impots <- impots *0.8
+        else{
+            txreduc <- 0.2 * (i*20500 +(nbparts-i)*7400 - FF$rfr)/(2000*i)
+            impots <- impots * (1-txreduc)
+        }
+    }
+}
 if (annee == 2015){
     if (impots < decote[i]/0.75)
     impots <- max(1.75*impots - decote[i],0)

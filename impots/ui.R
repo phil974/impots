@@ -6,7 +6,8 @@ mainPanel(
     p("Normalement, l'impôt est progressif.
 Ce qui veut dire, que plus le revenu est important, plus le taux  d'imposition est important."),
     radioButtons("typeff","Composition du foyer fiscal",choix,inline=TRUE),
-    sliderInput("revenus","revenus par personne (k€)",
+#    sliderInput("revenus","revenus par personne (k€)",
+    sliderInput("revenus","revenus du foyer (k€)",
                              min = 10,
                              max = rmax/10, value = 50),
         plotOutput("Plot1"),
