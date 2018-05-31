@@ -24,7 +24,7 @@ for(i in 1:length(FF$AJ))
         }
         else FF$AK[i] <- 0
     }
-# abbatement de 40 % sur dividendes pour revenunet mais pas rfr     
+# abbatement de 40 % sur dividendes pour revenu net mais pas rfr     
 revenunet <- sum(FF$AJ-FF$AK)+0.6*FF$BDC+FF$CVG
 FF$rfr <- sum(FF$AJ-FF$AK)+FF$BDC+FF$CVG
 #cat(revenunet,rfr,"\n")
@@ -49,9 +49,11 @@ else i = 2
 
 # decote : changement de systeme entre 2014 et 2015
 # encore un nouveau systeme en 2016...
-if (annee == 2016){
+if (annee >= 2015){
     if (impots < decote[i]/0.75)
-        impots <- max(1.75*impots - decote[i],0)   
+    impots <- max(1.75*impots - decote[i],0)
+}
+if (annee >= 2016){
     if(FF$rfr <i*20500 +(nbparts-i)*7400){
         
         if (FF$rfr <i*18500 +(nbparts-i)*7400)
@@ -61,10 +63,6 @@ if (annee == 2016){
             impots <- impots * (1-txreduc)
         }
     }
-}
-if (annee == 2015){
-    if (impots < decote[i]/0.75)
-    impots <- max(1.75*impots - decote[i],0)
 }
 if (annee == 2014){
     if (impots < decote[i])
@@ -129,8 +127,8 @@ rsa <- function(ressources,nbpers=1,alloc=0,logement=0){
 # sortie :
 # montant par mois
 allocf <- function(ressources = 0,enfants){
-# abbatement de 10%    
-r=0.9*ressources
+# abbatement de 10% , il n'y a plus nouveaux seuils...   
+r=ressources
 nb = length(enfants)
 # si moins de 2 enfants rien
 if (nb < 2) return(0)
@@ -142,7 +140,7 @@ if (nb>3) montant = montant + (nb-3)*di$alloc[4]
 # majoration + de 14 ans
 # si 2 enfants majoration pour plus de 14 ans uniquement pour le 2ieme
 if (nb14 & nb==2) nb14 = nb14-1
-montant = montant + nb14*di$allocsup
+montant = montant + nb14*di$alloc[2]*0.5
 #reduction si dépacement du plafond
 plafond4 = di$plafondalloc4+nb/10*di$plafondalloc2
 plafond2 = di$plafondalloc2+nb/10*di$plafondalloc2
