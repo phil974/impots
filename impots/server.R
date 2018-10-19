@@ -1,10 +1,11 @@
-tabimpot = matrix(nrow=rmax,ncol=3)
+tabimpot = matrix(nrow=rmax,ncol=length(choix))
 for (i in 1:rmax){
     tabimpot[i,1] = impots(filldeclarant(revenu=i*100))$impots
     FF = filldeclarant(revenu=i*50)
     FF$AJ[2]= 50*i
     tabimpot[i,2] = impots(FF,nbparts=2)$impots
-    tabimpot[i,3] = impots(FF,nbparts=3)$impots
+    tabimpot[i,3] = impots(FF,nbparts=2.5)$impots
+    tabimpot[i,4] = impots(FF,nbparts=3)$impots
 }
 TMI=diff(tabimpot)
 #TMI[,2:3] <- TMI[,2:3]/2
