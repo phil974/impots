@@ -110,7 +110,7 @@ Pour y voir plus clair, représentons la différence d'impôt couple/2 célibata
 ```{r echo = FALSE}
 plot(1:rmax/10,diff2,type="l",xlab="revenus annuels (k€)",ylab="différence d'impôt")
 lines(1:rmax/10,diff1,col="blue")
-legend("topright",legend=c("2 célibataires","couple"),col=c("blue","black"),lty=c(1,1))
+legend("topright",legend=c("revenus identiques","revenus 60:40"),col=c("blue","black"),lty=c(1,1))
 ```
 
 Quand les revenus sont différents, il est généralement plus interessant de faire une déclaration commune, la différence peut aller jusqu'à `r min(diff2)`€, c'est rarement le même montant...
