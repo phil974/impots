@@ -13,16 +13,16 @@ TMI=diff(tabimpot)
 shinyServer(function(input, output) {
     
      
-    r <- reactive(10*input$revenus) 
+    r <- reactive(10*input$revenus[1]) 
     i <- reactive(as.numeric(input$typeff))
-    
+    d <- reactive(10*input$revenus[2])  # début pour les graphes
     output$Plot1 <- renderPlot({
-        plot(1:r()/10,tabimpot[1:r(),i()],col="blue",type="l",
+        plot(d():r()/10,tabimpot[d():r(),i()],col="blue",type="l",
         xlab="revenus annuels (k€)",ylab="impôt",
         main=paste0("impôts d'",names(choix[i()])))
     })
     output$Plot2 <- renderPlot({  
-        plot(1:(r()-1)/10,TMI[1:(r()-1),i()],col="blue",type="l",xlab="revenus annuels (k€)",
+        plot(d():(r()-1)/10,TMI[d():(r()-1),i()],col="blue",type="l",xlab="revenus annuels (k€)",
         ylab="TMI (%)",main=paste0("TMI d'",names(choix[i()])),ylim=c(0,50))
     })
 })
