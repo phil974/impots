@@ -1,15 +1,15 @@
 ---
 title: "impôts"
 author: "Philippe Charton"
-date: "mai 2015"
+#date: "mai 2015"
 output: html_document
 ---
 ```{r echo = FALSE}
 source('~/rdata/impots/calculimpot.R')
-load("~/rdata/impots/2017")
+load("~/rdata/impots/2020")
 #load("~/rdata/perso/2014")
-# revenu max par adulte
-rmax=1000
+# revenu max par adulte (h€)
+rmax=500
 ```
 
 # Quelques éléments sur le système fiscal français

@@ -6,6 +6,7 @@ for (i in 1:rmax){
     tabimpot[i,2] = impots(FF,nbparts=2)$impots
     tabimpot[i,3] = impots(FF,nbparts=2.5)$impots
     tabimpot[i,4] = impots(FF,nbparts=3)$impots
+    tabimpot[i,5] = impots(FF,nbparts=4)$impots
 }
 TMI=diff(tabimpot)
 #TMI[,2:3] <- TMI[,2:3]/2

@@ -12,6 +12,7 @@
 #    AK = fraispro)
 # min_per et arrondi peuvent être mis à FALSE pour augmenter la régularité de l'impots
 # (mais le calcul est alors faux...)
+# ne tient pas (encore) compte de la flat tax (PFU)...
 impots <- function(FF,nbparts=1,DOM=FALSE,min_per=TRUE,arrondi = TRUE)
 with(di,{
 # calcul des frais pro : AK
@@ -101,6 +102,7 @@ filldeclarant <- function(revenusalaires = 0, dividendes = 0, plusvalues = 0,
     CVG = plusvalues,
     AK = fraispro)
 }
+# partie sociale
 # rsa bareme 2015
 # pour 2014 rsa moyen facteur 
 # rsasocle=502.63
@@ -127,7 +129,7 @@ rsa <- function(ressources,nbpers=1,alloc=0,logement=0){
 # sortie :
 # montant par mois
 allocf <- function(ressources = 0,enfants){
-# abbatement de 10% , il n'y a plus nouveaux seuils...   
+# abbatement de 10% , il n'y a plus : nouveaux seuils...   
 r=ressources
 nb = length(enfants)
 # si moins de 2 enfants rien
