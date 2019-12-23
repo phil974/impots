@@ -169,7 +169,7 @@ legend("topright",legend=c("célibataire","couple","famille"),col=1:3,lty=1)
 
 Le montant est dégréssif de 38 % du revenus. Si on est logé gratuitement ou si l'on bénéficie d'une allocation logement il faut retirer un forfait logement qui dépend du nombre de personnes `r di$forfaitlogement`...
 
-Et maintenant l'allocation logement, avec comme hypothèse un loyer supérieur au plafond en zone 2 (barème 2015 pour l'instant...).
+Et maintenant l'allocation logement, avec comme hypothèse un loyer supérieur au plafond en zone 1 (barème 2015-2017 pour l'instant...).
 ```{r echo=FALSE}
 allmax=300
 mall=numeric(allmax+1)

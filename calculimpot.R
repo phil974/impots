@@ -6,28 +6,28 @@
 # et 500 k€ pour couple et famille
 # FF foyer fiscal
 #list(  
-#    AJ = revenusalaires,
+#    AJ = revenusalaires,AO = pension_recue,
 #    BDC = dividendes,
 #    CVG = plusvalues,
+#    EL = pensions_verses,
 #    AK = fraispro)
 # min_per et arrondi peuvent être mis à FALSE pour augmenter la régularité de l'impots
 # (mais le calcul est alors faux...)
 # ne tient pas (encore) compte de la flat tax (PFU)...
-impots <- function(FF,nbparts=1,DOM=FALSE,min_per=TRUE,arrondi = TRUE)
+impots <- function(FF,nbparts=1,DOM=TRUE,min_per=TRUE,arrondi = TRUE)
 with(di,{
 # calcul des frais pro : AK
 for(i in 1:length(FF$AJ))
     # si pas frais réel faire le calcul
     if (is.na(FF$AK[i])){
-        if(FF$AJ[i]>0) {
-        FF$AK[i] <- min(plafondFraisPro,0.1*FF$AJ[i])
-        FF$AK[i] <- max(FF$AK[i],plancherFraisPro)
-        }
+        if(FF$AJ[i]>0) 
+        FF$AK[i] <- max(min(plafondFraisPro,0.1*FF$AJ[i]),
+                        min(plancherFraisPro,FF$AJ[i]))
         else FF$AK[i] <- 0
     }
 # abbatement de 40 % sur dividendes pour revenu net mais pas rfr     
-revenunet <- sum(FF$AJ-FF$AK)+0.6*FF$BDC+FF$CVG
-FF$rfr <- sum(FF$AJ-FF$AK)+FF$BDC+FF$CVG
+revenunet <- sum(FF$AJ-FF$AK)+0.6*FF$BDC+FF$CVG-FF$EL+FF$AO
+FF$rfr <- sum(FF$AJ-FF$AK)+FF$BDC+FF$CVG-FF$EL+FF$AO
 #cat(revenunet,rfr,"\n")
 # pas d'enfant
 if (nbparts <= 2){
@@ -95,11 +95,11 @@ with(di,{
 })
 #
 filldeclarant <- function(revenusalaires = 0, dividendes = 0, plusvalues = 0,
-                   fraispro = NA){
+                pension_recue=0,pensions_verses=0, fraispro = NA){
     list(  
-    AJ = revenusalaires,
-    BDC = dividendes,
-    CVG = plusvalues,
+    AJ = revenusalaires, 
+    BDC = dividendes,AO = pension_recue,
+    CVG = plusvalues, EL = pensions_verses,
     AK = fraispro)
 }
 # partie sociale
@@ -154,10 +154,11 @@ if (r>plafond2) return(montant/2 + (plafond2+6*montant-r)/12)
 montant
 }
 # allocation logement uniquement secteur locatif
-# donnees 2015
+# donnees 2015 mise à jour en partie en 2017
 # resources par an allocation par mois
 # DOM est la uniquement pour les ... dans fct impotsrsa
-alloclogement <- function(ressources,nbpers=1,loyer=Inf,zone = 2,
+# zone 1 Paris 2 Grandes Villes 3 autres
+alloclogement <- function(ressources,nbpers=1,loyer=Inf,zone = 1,
     arrondi = TRUE,DOM){
 # l    
     l2=di$plafondloyerzone[zone,min(3,nbpers)]
