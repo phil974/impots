@@ -50,24 +50,21 @@ else i = 2
 
 # decote : changement de systeme entre 2014 et 2015
 # encore un nouveau systeme en 2016...
-if (annee >= 2015){
-    if (impots < decote[i]/0.75)
-    impots <- max(1.75*impots - decote[i],0)
+# changement 2020 uniformisation avec introduction txdecote
+# source https://www.service-public.fr/particuliers/vosdroits/F34328
+if (annee >= 2014 ){
+    if (impots < decote[i]/txdecote)
+    impots <- max((1+txdecote)*impots - decote[i],0)
 }
-if (annee >= 2016){
-    if(FF$rfr <i*20500 +(nbparts-i)*7400){
-        
-        if (FF$rfr <i*18500 +(nbparts-i)*7400)
+if (annee >= 2016 && annee <= 2019){
+    if(FF$rfr <i*reduction[2] +(nbparts-i)*reduction[3]){
+        if (FF$rfr <i*reduction[1] +(nbparts-i)*reduction[3])
             impots <- impots *0.8
         else{
-            txreduc <- 0.2 * (i*20500 +(nbparts-i)*7400 - FF$rfr)/(2000*i)
+            txreduc <- 0.2 * (i*reduction[2] +(nbparts-i)*reduction[3] - FF$rfr)/(reduction[4]*i)
             impots <- impots * (1-txreduc)
         }
     }
-}
-if (annee == 2014){
-    if (impots < decote[i])
-        impots <- max(2*impots - decote[i],0) 
 }
 # arrondi ?
 if (arrondi)
@@ -158,6 +155,9 @@ montant
 # resources par an allocation par mois
 # DOM est la uniquement pour les ... dans fct impotsrsa
 # zone 1 Paris 2 Grandes Villes 3 autres
+# source Code de la construction et de l'habitation
+# Article D823-16 et 17
+# https://www.legifrance.gouv.fr/affichCode.do;jsessionid=9EF07DC6154500BA98C2D680C2783C12.tplgfr21s_3?idSectionTA=LEGISCTA000038878907&cidTexte=LEGITEXT000006074096&dateTexte=20200101
 alloclogement <- function(ressources,nbpers=1,loyer=Inf,zone = 1,
     arrondi = TRUE,DOM){
 # l    
@@ -191,7 +191,8 @@ alloclogement <- function(ressources,nbpers=1,loyer=Inf,zone = 1,
     montant = l+c-Pp
     if(montant<15) montant=0
     else montant = round(0.995*montant,2)
-    montant
+# - 5 reforme Macron...    
+    montant - 5
 }
 # bourse CROUS
 # uniquement dans le cas de 6 points de charge pour l'instant
