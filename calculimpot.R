@@ -189,10 +189,11 @@ alloclogement <- function(ressources,nbpers=1,loyer=Inf,zone = 1,
     Pp = round((tf+tl)/100*Rp+p0,2)
 # montant
     montant = l+c-Pp
-    if(montant<15) montant=0
+    if(montant<15) montant = 0
     else montant = round(0.995*montant,2)
 # - 5 reforme Macron...    
-    montant - 5
+    if(montant > 0) montant = montant - 5
+    montant
 }
 # bourse CROUS
 # uniquement dans le cas de 6 points de charge pour l'instant
