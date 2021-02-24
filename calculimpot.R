@@ -14,7 +14,7 @@
 # min_per et arrondi peuvent être mis à FALSE pour augmenter la régularité de l'impots
 # (mais le calcul est alors faux...)
 # ne tient pas (encore) compte de la flat tax (PFU)...
-impots <- function(FF,nbparts=1,DOM=TRUE,min_per=TRUE,arrondi = TRUE)
+impots <- function(FF,nbparts=1,DOM=FALSE,min_per=TRUE,arrondi = TRUE)
 with(di,{
 # calcul des frais pro : AK
 for(i in 1:length(FF$AJ))
@@ -111,11 +111,11 @@ filldeclarant <- function(revenusalaires = 0, dividendes = 0, plusvalues = 0,
 rsa <- function(ressources,nbpers=1,alloc=0,logement=0){
     ressources = ressources/12
     coef=switch(nbpers,1,1.5,1.8,2.1,2.5,2.9)
-    montant = max(0,di$rsasocle*coef - 0.38*ressources)
+    montant = max(0,ds$rsasocle*coef - 0.38*ressources)
     if(alloc >0) montant = montant - alloc
     if(logement>0) 
         montant <- montant 
-            - min(logement,di$forfaitlogement[min(3,nbpers)])
+            - min(logement,ds$forfaitlogement[min(3,nbpers)])
     if(montant < 6) montant = 0
     montant
 }
