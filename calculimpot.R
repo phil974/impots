@@ -134,15 +134,15 @@ if (nb < 2) return(0)
 # nb enfants de plus de 14 ans
 nb14 = sum(enfants >=14)
 # calcul du montant (le tableau contient 2, 3 et par enfant supplémentaire)
-montant = di$alloc[min(3,nb)]
-if (nb>3) montant = montant + (nb-3)*di$alloc[4]
+montant = ds$alloc[min(3,nb)]
+if (nb>3) montant = montant + (nb-3)*ds$alloc[4]
 # majoration + de 14 ans
 # si 2 enfants majoration pour plus de 14 ans uniquement pour le 2ieme
 if (nb14 & nb==2) nb14 = nb14-1
-montant = montant + nb14*di$alloc[2]*0.5
+montant = montant + nb14*ds$alloc[2]*0.5
 #reduction si dépacement du plafond
-plafond4 = di$plafondalloc4+nb/10*di$plafondalloc2
-plafond2 = di$plafondalloc2+nb/10*di$plafondalloc2
+plafond4 = ds$plafondalloc4+nb/10*ds$plafondalloc2
+plafond2 = ds$plafondalloc2+nb/10*ds$plafondalloc2
 if (r>plafond4+3*montant) return(montant/4)
 if (r>plafond4) return(montant/4 + (plafond4+3*montant-r)/12)
 if (r>plafond2+6*montant) return(montant/2)
@@ -161,26 +161,26 @@ montant
 alloclogement <- function(ressources,nbpers=1,loyer=Inf,zone = 1,
     arrondi = TRUE,DOM){
 # l    
-    l2=di$plafondloyerzone[zone,min(3,nbpers)]
+    l2=dl$plafondloyerzone[zone,min(3,nbpers)]
     if(nbpers>3) 
-        l2 = l2 + di$plafondloyerzone[zone,4]*(nbpers-3)
+        l2 = l2 + dl$plafondloyerzone[zone,4]*(nbpers-3)
     l = min(loyer,l2)
 # c
     if(nbpers <=2)
-        c=di$cc
+        c=dl$cc
     else
-        c=di$cc + (nbpers-2)*di$ccsup
+        c=dl$cc + (nbpers-2)*dl$ccsup
 # Rp    
     if (arrondi) r = 100*ceiling(0.9*ressources/100)
     else r=0.9*ressources
-    r0 = di$R0[nbpers]
+    r0 = dl$R0[nbpers]
     Rp = max(0,r-r0)
 # Pp    
-    p0 = min((l+c)*0.085,di$p0)
-    tf = di$tf[nbpers]
-    lr = di$lr[min(3,nbpers)]
+    p0 = min((l+c)*0.085,dl$p0)
+    tf = dl$tf[nbpers]
+    lr = dl$lr[min(3,nbpers)]
     if(nbpers >3)
-        lr = lr + di$lr[4]*(nbpers-3)
+        lr = lr + dl$lr[4]*(nbpers-3)
     rl =round((l/lr)*100,2)
     if(rl<45) tl = 0
     if(rl<75) tl = 0.45*(rl-45)
@@ -207,10 +207,10 @@ allocrous <- function(ressources,nbetu=0){
     r = 0.9*ressources
     montant = 0
     i=1
-    while (r <=di$BoursePlafond4[i] & i<=9)
+    while (r <=db$BoursePlafond4[i] & i<=9)
         i=i+1
     if (i>1)
-        montant = nbetu*(di$droitsinscriptions + di$BourseMontant[i-1])
+        montant = nbetu*(db$droitsinscriptions + db$BourseMontant[i-1])
     montant
 }
 # revenusalaire par an

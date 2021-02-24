@@ -33,7 +33,7 @@ Le taux marginal d’impostion (TMI) c’est l’impôt en plus quand on augment
 
 C’est aussi la pente du graphique ci-dessus.
 
-Sur ce graphique, on constate que la mise en place de décote fait que le TMI est dans un premier temps de 22 %.
+Sur ce graphique, on constate que la mise en place de décote fait que le TMI est dans un premier temps de 15 %.
 (En incluant le minimum de perception, on a même un petit saut, pour 1 € supplémentaire, l'impôt passe de 0 à 61€ !!)
 Ci-dessous la représentation du TMI.
 
