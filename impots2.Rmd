@@ -7,7 +7,12 @@ output: html_document
 ```{r echo = FALSE}
 source('~/rdata/impots/calculimpot.R')
 load("~/rdata/impots/2020")
-#load("~/rdata/perso/2014")
+#load("~/rdata/impots/2016")
+if (di$annee < 2020){
+        ds = di
+        dl = di
+        db = di
+}
 # revenu max par adulte (h€)
 rmax=500
 ```
@@ -27,7 +32,7 @@ plot(1:rmax/10,tabimpot1,col="blue",type="l",xlab="revenus annuels (k€)",ylab=
 
 ```
 
-(revenu d'activité imposable avec frais professionnels de 10 % minimun `r di$plancherFraisPro` maximum 12157)
+(revenu d'activité imposable avec frais professionnels de 10 % minimun `r di$plancherFraisPro` maximum `r di$plafondFraisPro`)
 
 Le taux marginal d’impostion (TMI) c’est l’impôt en plus quand on augmente son revenu de 100 €.
 

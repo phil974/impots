@@ -1,20 +1,21 @@
 # simulation ratachement
-revenus1 <- 70455   #revenus des parents
-revenus2 <- 20174+2954
-revenus3 <- 2519   #revenus de l'enfant
-pension <- 5947   # pension alimentaire versée plafond 5947 ?
+#revenus des parents 2022
+revenus1 <- 83058 
+revenus2 <- 11300
+revenus3 <- 7030   #revenus de l'enfant
+pension <- 6368   # pension alimentaire versée plafond 6368 ?
 #pension <- 00
 FF <- filldeclarant(revenusalaires = revenus1)
 FF$AJ[2] <- revenus2
 FF$AJ[3] <- revenus3
-impotsavec <- impots(FF,nbparts = 3, DOM =TRUE)$impots
+impotsavec <- impots(FF,nbparts = 2.5, DOM =TRUE)$impots
 
 # 9042
 # 
 FF <- filldeclarant(revenusalaires = revenus1)
 FF$AJ[2] <- revenus2
 FF$EL <- pension # pension alimentaire versée
-impotssans <- impots(FF,nbparts = 2.5, DOM = TRUE)$impots
+impotssans <- impots(FF,nbparts = 2, DOM = TRUE)$impots
 #7113
 FF <- filldeclarant(revenusalaires = revenus3)
 FF$AO <- pension # pension alimentaire reçue

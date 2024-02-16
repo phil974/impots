@@ -1,20 +1,20 @@
 # calcul IRPP
 # il faut charger données et barème
-# par ex load("2014")
+# par ex load("2014") pour revenus de 2014
 # ne tient pas compte de la contribution execptionnelle
 # qui commence pour rfr >250 k€ pour célibataire
 # et 500 k€ pour couple et famille
 # FF foyer fiscal
 #list(  
-#    AJ = revenusalaires,AO = pension_recue,
+#    AJ = revenusalaires,AO = pension_reçue,
 #    BDC = dividendes,
 #    CVG = plusvalues,
-#    EL = pensions_verses,
+#    EL = pensions_versées,
 #    AK = fraispro)
 # min_per et arrondi peuvent être mis à FALSE pour augmenter la régularité de l'impots
 # (mais le calcul est alors faux...)
 # ne tient pas (encore) compte de la flat tax (PFU)...
-impots <- function(FF,nbparts=1,DOM=FALSE,min_per=TRUE,arrondi = TRUE)
+impots <- function(FF,nbparts=1,DOM=TRUE,min_per=TRUE,arrondi = TRUE)
 with(di,{
 # calcul des frais pro : AK
 for(i in 1:length(FF$AJ))
@@ -125,6 +125,9 @@ rsa <- function(ressources,nbpers=1,alloc=0,logement=0){
 # ressources : ressources annuelles du foyer fiscal
 # sortie :
 # montant par mois
+# ref article D521-1 du code de la sécurité sociale
+# ne tient pas compte de l'allocation forfaitaire pour
+# enfant l'année des 20 ans
 allocf <- function(ressources = 0,enfants){
 # abbatement de 10% , il n'y a plus : nouveaux seuils...   
 r=ressources
